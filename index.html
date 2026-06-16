@@ -1,0 +1,1654 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>潮创出海 AI 中转站建设方案</title>
+    <meta
+      name="description"
+      content="潮创会面向汕头华侨经济文化合作试验区的 AI 中转站建设方案在线汇报版"
+    />
+    <style>
+      :root {
+        --white: #ffffff;
+        --bone: #fafafa;
+        --black: #0a0a0a;
+        --terminal: #111113;
+        --ink: #18181b;
+        --slate: #52525b;
+        --mute: #a1a1aa;
+        --hairline: #e4e4e7;
+        --hairline-dark: #27272a;
+        --plasma: #ff1fa8;
+        --violet: #7c3aed;
+        --cyan: #00e5ff;
+        --lime: #9aff1f;
+        --amber: #ffb347;
+        --verified: #00b66e;
+        --warn: #e0a82e;
+        --error: #f43f5e;
+        --sidebar: 280px;
+        --radius: 4px;
+        --font-sans: "Geist", "HarmonyOS Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+        --font-mono: "Geist Mono", "SFMono-Regular", "Cascadia Mono", "Menlo", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
+        background: var(--white);
+        color: var(--black);
+        font-family: var(--font-sans);
+        overflow: hidden;
+      }
+
+      body {
+        display: grid;
+        grid-template-columns: var(--sidebar) minmax(0, 1fr);
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .progress {
+        position: fixed;
+        inset: 0 auto auto var(--sidebar);
+        width: calc(100vw - var(--sidebar));
+        height: 3px;
+        background: var(--hairline);
+        z-index: 50;
+      }
+
+      .progress span {
+        display: block;
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--plasma), var(--violet), var(--cyan), var(--lime), var(--amber));
+        transition: width 260ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .sidebar {
+        height: 100vh;
+        border-right: 1px solid var(--hairline);
+        background: var(--bone);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        padding: 24px 18px;
+        overflow: hidden;
+      }
+
+      .brand {
+        display: grid;
+        gap: 12px;
+        border-bottom: 1px solid var(--hairline);
+        padding-bottom: 20px;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .mark {
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--black);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+        padding: 3px;
+      }
+
+      .mark i {
+        display: block;
+        background: var(--black);
+      }
+
+      .deck-meta {
+        display: grid;
+        gap: 6px;
+        color: var(--slate);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .rail {
+        overflow: auto;
+        padding: 18px 0;
+        scrollbar-width: thin;
+      }
+
+      .nav-item {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 10px;
+        align-items: start;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        color: var(--slate);
+        padding: 10px 8px;
+        border-radius: var(--radius);
+        cursor: pointer;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--white);
+        color: var(--black);
+      }
+
+      .nav-index {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--mute);
+        padding-top: 2px;
+      }
+
+      .nav-title {
+        display: grid;
+        gap: 4px;
+      }
+
+      .nav-title strong {
+        font-size: 13px;
+        line-height: 1.35;
+        font-weight: 650;
+      }
+
+      .nav-title small {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--mute);
+        text-transform: uppercase;
+      }
+
+      .sidebar-footer {
+        display: grid;
+        gap: 14px;
+        border-top: 1px solid var(--hairline);
+        padding-top: 16px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .control-btn {
+        width: 38px;
+        height: 34px;
+        border: 1px solid var(--hairline);
+        background: var(--white);
+        color: var(--black);
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+
+      .control-btn:hover {
+        background: var(--black);
+        color: var(--white);
+      }
+
+      .counter {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--slate);
+      }
+
+      .deck {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--white);
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: 68px 72px 52px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 26px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate3d(24px, 0, 0);
+        transition:
+          opacity 300ms cubic-bezier(0.16, 1, 0.3, 1),
+          transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .slide.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate3d(0, 0, 0);
+      }
+
+      .slide.dark {
+        background: var(--terminal);
+        color: var(--white);
+      }
+
+      .slide.dark .kicker,
+      .slide.dark .source,
+      .slide.dark .body-copy,
+      .slide.dark .caption,
+      .slide.dark .mono-muted {
+        color: var(--mute);
+      }
+
+      .slide.dark .hairline-card,
+      .slide.dark .stat-card,
+      .slide.dark .feature-row,
+      .slide.dark .timeline-step,
+      .slide.dark .ask-card {
+        border-color: var(--hairline-dark);
+        background: #18181b;
+      }
+
+      .slide.dark .terminal-panel {
+        background: #0a0a0a;
+      }
+
+      .slide-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .kicker {
+        font-family: var(--font-mono);
+        color: var(--slate);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 64px;
+        line-height: 0.96;
+        letter-spacing: -0.02em;
+        max-width: 980px;
+      }
+
+      h2 {
+        font-size: 42px;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        max-width: 960px;
+      }
+
+      h3 {
+        font-size: 20px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+      }
+
+      .accent-word {
+        background: linear-gradient(90deg, var(--plasma), var(--violet), var(--cyan));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .body-copy {
+        color: var(--slate);
+        font-size: 18px;
+        line-height: 1.75;
+        max-width: 760px;
+      }
+
+      .slide-no {
+        font-family: var(--font-mono);
+        color: var(--mute);
+        font-size: 12px;
+      }
+
+      .slide-body {
+        display: grid;
+        align-content: center;
+        gap: 28px;
+        min-height: 0;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+        gap: 44px;
+        align-items: center;
+      }
+
+      .split.equal {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3,
+      .grid-4 {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .stat-card,
+      .hairline-card,
+      .ask-card,
+      .timeline-step {
+        background: var(--bone);
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before,
+      .hairline-card.featured::before,
+      .ask-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--plasma), var(--violet), var(--cyan), var(--lime), var(--amber));
+      }
+
+      .stat-num {
+        font-family: var(--font-mono);
+        font-size: 30px;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+
+      .stat-label,
+      .caption,
+      .mono-muted {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--slate);
+        line-height: 1.45;
+      }
+
+      .stat-text {
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--slate);
+      }
+
+      .source {
+        color: var(--mute);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .media-stage {
+        min-height: 420px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+        position: relative;
+      }
+
+      .media-tile {
+        min-height: 170px;
+        border: 1px solid var(--hairline-dark);
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
+          var(--terminal);
+        border-radius: var(--radius);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .media-tile canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .tile-meta {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: #f5f4ef;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+      }
+
+      .terminal-panel {
+        border: 1px solid var(--hairline-dark);
+        background: var(--terminal);
+        color: #f5f4ef;
+        border-radius: var(--radius);
+        padding: 18px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      .terminal-panel .line {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        border-bottom: 1px solid var(--hairline-dark);
+        padding: 6px 0;
+      }
+
+      .terminal-panel .line:last-child {
+        border-bottom: 0;
+      }
+
+      .tag-row,
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag,
+      .pill {
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        padding: 6px 8px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        background: var(--white);
+        color: var(--slate);
+      }
+
+      .slide.dark .tag,
+      .slide.dark .pill {
+        border-color: var(--hairline-dark);
+        background: #18181b;
+        color: var(--mute);
+      }
+
+      .problem-stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .feature-row {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        border: 1px solid var(--hairline);
+        background: var(--bone);
+        border-radius: var(--radius);
+        padding: 14px;
+      }
+
+      .feature-icon {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--hairline);
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--black);
+        background: var(--white);
+      }
+
+      .slide.dark .feature-icon {
+        background: var(--terminal);
+        color: var(--white);
+        border-color: var(--hairline-dark);
+      }
+
+      .feature-row strong {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 3px;
+      }
+
+      .feature-row span {
+        color: var(--slate);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .slide.dark .feature-row span {
+        color: var(--mute);
+      }
+
+      .flow-map {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .flow-col {
+        display: grid;
+        gap: 10px;
+      }
+
+      .flow-node {
+        border: 1px solid var(--hairline);
+        background: var(--bone);
+        border-radius: var(--radius);
+        padding: 14px;
+        min-height: 76px;
+      }
+
+      .flow-node strong {
+        display: block;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+
+      .flow-node span {
+        color: var(--slate);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .hub {
+        min-height: 360px;
+        border: 1px solid var(--hairline);
+        background: var(--terminal);
+        border-radius: var(--radius);
+        padding: 22px;
+        color: var(--white);
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hub::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 36px 36px;
+        opacity: 0.5;
+      }
+
+      .hub-ring {
+        width: 210px;
+        height: 210px;
+        border: 1px solid var(--hairline-dark);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hub-ring::after {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 2px solid transparent;
+        border-top-color: var(--cyan);
+        border-right-color: var(--plasma);
+        border-radius: 50%;
+        animation: orbit 8s linear infinite;
+      }
+
+      @keyframes orbit {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hub-title {
+        text-align: center;
+        font-size: 24px;
+        line-height: 1.15;
+        z-index: 1;
+      }
+
+      .hub-sub {
+        z-index: 1;
+        font-family: var(--font-mono);
+        color: var(--mute);
+        font-size: 12px;
+      }
+
+      .layer-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .layer-card {
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--bone);
+        padding: 18px;
+        min-height: 180px;
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+
+      .layer-card .mono-muted {
+        color: var(--mute);
+      }
+
+      .mock-console {
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--white);
+        overflow: hidden;
+      }
+
+      .console-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--hairline);
+        padding: 12px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .console-body {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        min-height: 360px;
+      }
+
+      .filter-rail {
+        border-right: 1px solid var(--hairline);
+        padding: 14px;
+        display: grid;
+        align-content: start;
+        gap: 8px;
+        background: var(--bone);
+      }
+
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding: 14px;
+      }
+
+      .model-card {
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--white);
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+        min-height: 152px;
+      }
+
+      .preview-strip {
+        height: 54px;
+        border: 1px solid var(--hairline);
+        background:
+          linear-gradient(135deg, rgba(255, 31, 168, 0.25), transparent),
+          linear-gradient(45deg, rgba(0, 229, 255, 0.2), transparent),
+          var(--terminal);
+        border-radius: var(--radius);
+      }
+
+      .model-id {
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .model-meta {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        color: var(--slate);
+        font-size: 11px;
+      }
+
+      .ledger-table {
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--white);
+      }
+
+      .ledger-row {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr 1fr 0.8fr 0.8fr;
+        border-bottom: 1px solid var(--hairline);
+        min-height: 48px;
+        align-items: center;
+      }
+
+      .ledger-row:last-child {
+        border-bottom: 0;
+      }
+
+      .ledger-row > div {
+        padding: 12px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .ledger-row.header {
+        background: var(--bone);
+        color: var(--slate);
+      }
+
+      .chart {
+        height: 220px;
+        border: 1px solid var(--hairline);
+        background:
+          linear-gradient(var(--hairline) 1px, transparent 1px),
+          linear-gradient(90deg, var(--hairline) 1px, transparent 1px),
+          var(--bone);
+        background-size: 100% 25%, 25% 100%;
+        border-radius: var(--radius);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chart svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .scenario {
+        min-height: 250px;
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--bone);
+        padding: 16px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 14px;
+      }
+
+      .scenario-icon {
+        height: 70px;
+        border: 1px solid var(--hairline);
+        background: var(--white);
+        border-radius: var(--radius);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .scenario-icon::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, transparent 49%, rgba(10, 10, 10, 0.08) 50%, transparent 51%),
+          linear-gradient(transparent 49%, rgba(10, 10, 10, 0.08) 50%, transparent 51%);
+        background-size: 18px 18px;
+      }
+
+      .scenario strong {
+        font-size: 16px;
+      }
+
+      .scenario p {
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--slate);
+      }
+
+      .business-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .business-row {
+        display: grid;
+        grid-template-columns: 180px 1fr 180px;
+        gap: 14px;
+        align-items: stretch;
+      }
+
+      .business-row > div {
+        border: 1px solid var(--hairline);
+        background: var(--bone);
+        border-radius: var(--radius);
+        padding: 16px;
+      }
+
+      .business-row .value {
+        background: var(--terminal);
+        color: var(--white);
+      }
+
+      .ask-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .ask-card {
+        min-height: 160px;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .timeline-step {
+        min-height: 280px;
+        display: grid;
+        align-content: start;
+        gap: 18px;
+      }
+
+      .timeline-step ul,
+      .hairline-card ul,
+      .ask-card ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--slate);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+
+      .risk-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .risk {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        gap: 14px;
+        border: 1px solid var(--hairline);
+        background: var(--bone);
+        border-radius: var(--radius);
+        padding: 16px;
+      }
+
+      .risk .status {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid var(--warn);
+        display: grid;
+        place-items: center;
+        color: var(--warn);
+        font-family: var(--font-mono);
+      }
+
+      .closing-list {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .closing-list .hairline-card {
+        min-height: 150px;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      .slide.active .reveal {
+        animation: reveal 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      .slide.active .reveal:nth-child(2) {
+        animation-delay: 80ms;
+      }
+
+      .slide.active .reveal:nth-child(3) {
+        animation-delay: 150ms;
+      }
+
+      .slide.active .reveal:nth-child(4) {
+        animation-delay: 220ms;
+      }
+
+      .slide.active .reveal:nth-child(5) {
+        animation-delay: 290ms;
+      }
+
+      @keyframes reveal {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1180px) {
+        body {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: fixed;
+          z-index: 80;
+          inset: auto 0 0;
+          height: auto;
+          min-height: 72px;
+          border-right: 0;
+          border-top: 1px solid var(--hairline);
+          grid-template-columns: 1fr auto;
+          grid-template-rows: auto;
+          padding: 10px 14px;
+        }
+
+        .brand {
+          border-bottom: 0;
+          padding-bottom: 0;
+        }
+
+        .deck-meta,
+        .rail {
+          display: none;
+        }
+
+        .sidebar-footer {
+          border-top: 0;
+          padding-top: 0;
+        }
+
+        .progress {
+          left: 0;
+          width: 100vw;
+        }
+
+        .deck {
+          height: calc(100vh - 72px);
+        }
+
+        .slide {
+          padding: 48px 28px 36px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        h2 {
+          font-size: 30px;
+        }
+
+        .split,
+        .split.equal,
+        .flow-map,
+        .business-row {
+          grid-template-columns: 1fr;
+        }
+
+        .grid-3,
+        .grid-4,
+        .layer-grid,
+        .scenario-grid,
+        .ask-grid,
+        .timeline,
+        .risk-grid,
+        .closing-list {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .media-stage {
+          min-height: 300px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          overflow: auto;
+        }
+
+        .deck {
+          height: auto;
+          min-height: calc(100vh - 72px);
+          overflow: visible;
+        }
+
+        .slide {
+          position: relative;
+          display: none;
+          min-height: calc(100vh - 72px);
+        }
+
+        .slide.active {
+          display: grid;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+
+        h2 {
+          font-size: 26px;
+        }
+
+        .grid-3,
+        .grid-4,
+        .layer-grid,
+        .scenario-grid,
+        .ask-grid,
+        .timeline,
+        .risk-grid,
+        .closing-list,
+        .model-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .console-body {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-rail {
+          border-right: 0;
+          border-bottom: 1px solid var(--hairline);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 1ms !important;
+          transition-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="汇报目录">
+      <div class="brand">
+        <div class="wordmark">
+          <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>潮创出海</span>
+        </div>
+        <div class="deck-meta">
+          <span>AI TRANSIT STATION</span>
+          <span>汕头华侨试验区汇报版</span>
+          <span>2026-06-16 · v1</span>
+        </div>
+      </div>
+      <nav class="rail" id="rail" aria-label="章节"></nav>
+      <div class="sidebar-footer">
+        <div class="controls" aria-label="翻页控制">
+          <button class="control-btn" id="prev" type="button" aria-label="上一页">←</button>
+          <button class="control-btn" id="next" type="button" aria-label="下一页">→</button>
+        </div>
+        <div class="counter" id="counter">01 / 14</div>
+      </div>
+    </aside>
+
+    <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+
+    <main class="deck" id="deck">
+      <section class="slide dark active" data-title="封面" data-section="Cover">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">竞标 / 汇报初稿</div>
+            <h1>潮创出海 <span class="accent-word">AI 中转站</span></h1>
+          </div>
+          <div class="slide-no">01</div>
+        </header>
+        <div class="slide-body split">
+          <div class="reveal">
+            <p class="body-copy">
+              依托汕头国际海缆登陆站、华侨试验区侨商网络和数字服务贸易窗口，由潮创会牵头建设可计量、可监管、可分账、可持续运营的 AI 服务贸易平台。
+            </p>
+            <div class="tag-row" style="margin-top: 24px">
+              <span class="tag">Token 计量</span>
+              <span class="tag">模型 Explore</span>
+              <span class="tag">Playground</span>
+              <span class="tag">销售分账</span>
+              <span class="tag">供应商管理</span>
+              <span class="tag">行业智能体</span>
+            </div>
+          </div>
+          <div class="media-stage reveal" aria-label="AI 模型输出样张墙">
+            <div class="media-tile"><canvas data-art="0"></canvas><div class="tile-meta"><span>image-gen</span><span>侨商营销</span></div></div>
+            <div class="media-tile"><canvas data-art="1"></canvas><div class="tile-meta"><span>video-gen</span><span>AIGC 短剧</span></div></div>
+            <div class="media-tile"><canvas data-art="2"></canvas><div class="tile-meta"><span>workflow</span><span>工厂助手</span></div></div>
+            <div class="media-tile"><canvas data-art="3"></canvas><div class="tile-meta"><span>batch</span><span>低空广告</span></div></div>
+            <div class="media-tile"><canvas data-art="4"></canvas><div class="tile-meta"><span>billing</span><span>Token 计量</span></div></div>
+            <div class="media-tile"><canvas data-art="5"></canvas><div class="tile-meta"><span>route</span><span>运营商入口</span></div></div>
+          </div>
+        </div>
+        <footer class="source"><span>牵头单位：潮创会</span><span>Privileged & Confidential</span></footer>
+      </section>
+
+      <section class="slide" data-title="核心判断" data-section="Thesis">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">01 / 核心判断</div>
+            <h2>不是再建一个模型工具，而是建设一个运营中心。</h2>
+          </div>
+          <div class="slide-no">02</div>
+        </header>
+        <div class="slide-body split equal">
+          <div class="problem-stack reveal">
+            <div class="feature-row">
+              <div class="feature-icon">01</div>
+              <div><strong>把通道资源变成贸易数据</strong><span>模型调用、内容承制、企业服务和行业应用统一进入平台账本。</span></div>
+              <span class="mono-muted">data</span>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">02</div>
+              <div><strong>把分散需求变成园区抓手</strong><span>侨商、出海工厂、内容公司、运营商和供应商被组织到同一入口。</span></div>
+              <span class="mono-muted">hub</span>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">03</div>
+              <div><strong>把 Token 差价升级为行业服务</strong><span>从低毛利转售走向智能体、工作流和可交付场景。</span></div>
+              <span class="mono-muted">value</span>
+            </div>
+          </div>
+          <div class="grid-3 reveal">
+            <div class="stat-card"><div class="stat-num">1</div><div class="stat-label">统一入口</div><p class="stat-text">客户、模型、运营商、供应商和渠道进入同一运营界面。</p></div>
+            <div class="stat-card"><div class="stat-num">7</div><div class="stat-label">平台模块</div><p class="stat-text">Explore、Playground、计量、分账、供应商、运营商入口、行业智能体。</p></div>
+            <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">实施阶段</div><p class="stat-text">筹备汇报、平台原型、运营中心扩展。</p></div>
+          </div>
+        </div>
+        <footer class="source"><span>Source: 潮创出海建设方案 v1</span><span>02 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="为什么是汕头" data-section="Context">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">02 / 区位与窗口</div>
+            <h2>汕头的机会，是把跨境连接能力转成数字服贸运营能力。</h2>
+          </div>
+          <div class="slide-no">03</div>
+        </header>
+        <div class="slide-body split">
+          <div class="reveal">
+            <p class="body-copy">
+              本轮材料建议采用稳健口径：以国际海缆登陆站等跨境通信基础设施为区位基础，以华侨试验区侨商网络和出海企业资源为需求基础，以合规数字服务贸易为承载方向。
+            </p>
+            <div class="pill-row" style="margin-top: 22px">
+              <span class="pill">国际海缆</span>
+              <span class="pill">侨商网络</span>
+              <span class="pill">中资出海</span>
+              <span class="pill">数字服贸</span>
+            </div>
+          </div>
+          <div class="layer-grid reveal">
+            <div class="layer-card"><div class="mono-muted">Layer 01</div><h3>通信区位</h3><p class="stat-text">用权威附件证明跨境通信资源，避免未经确认的政策承诺。</p></div>
+            <div class="layer-card"><div class="mono-muted">Layer 02</div><h3>需求组织</h3><p class="stat-text">华侨试验区组织侨商、园区企业和海外经营场景。</p></div>
+            <div class="layer-card"><div class="mono-muted">Layer 03</div><h3>运营平台</h3><p class="stat-text">潮创会牵头将客户、供应商、渠道和账单纳入统一平台。</p></div>
+            <div class="layer-card"><div class="mono-muted">Layer 04</div><h3>服务贸易</h3><p class="stat-text">把模型调用和内容交付转化为可统计、可结算、可申报数据。</p></div>
+          </div>
+        </div>
+        <footer class="source"><span>正式竞标材料需补主管部门/运营商权威材料</span><span>03 / 14</span></footer>
+      </section>
+
+      <section class="slide dark" data-title="平台总架构" data-section="Architecture">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">03 / 平台架构</div>
+            <h2>一个中转站，承接客户、模型、运营商、供应商与分账。</h2>
+          </div>
+          <div class="slide-no">04</div>
+        </header>
+        <div class="slide-body">
+          <div class="flow-map reveal">
+            <div class="flow-col">
+              <div class="flow-node"><strong>海外侨商</strong><span>营销内容、多语种客服、合同邮件、经营助手</span></div>
+              <div class="flow-node"><strong>中资海外工厂</strong><span>培训、知识库、设备问答、生产资料生成</span></div>
+              <div class="flow-node"><strong>AIGC 承制方</strong><span>短剧、广告、品牌视频和社媒内容生产</span></div>
+            </div>
+            <div class="hub">
+              <div class="hub-ring">
+                <div>
+                  <div class="hub-title">潮创出海<br />AI 中转站</div>
+                  <div class="hub-sub">metering · routing · settlement</div>
+                </div>
+              </div>
+            </div>
+            <div class="flow-col">
+              <div class="flow-node"><strong>三大运营商入口</strong><span>移动 / 联通 / 电信模型广场专区或 API 代理</span></div>
+              <div class="flow-node"><strong>模型供应商</strong><span>模型上架、价格、调用状态和结算报表</span></div>
+              <div class="flow-node"><strong>政府与园区</strong><span>服务贸易统计、合规归集和试点示范数据</span></div>
+            </div>
+          </div>
+        </div>
+        <footer class="source"><span>统一平台做计量、分账、合规运营与供应商接入</span><span>04 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="四层能力" data-section="Capabilities">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">04 / 能力层级</div>
+            <h2>用四层能力把“概念项目”压实成“可运营平台”。</h2>
+          </div>
+          <div class="slide-no">05</div>
+        </header>
+        <div class="slide-body">
+          <div class="layer-grid reveal">
+            <div class="layer-card featured"><div class="mono-muted">Access</div><h3>接入层</h3><p class="stat-text">客户入口、运营商入口、供应商入口。统一承接需求来源与供给来源。</p></div>
+            <div class="layer-card"><div class="mono-muted">Model</div><h3>模型层</h3><p class="stat-text">模型 Explore、Playground、API Docs，让客户先测试、再接入、后放量。</p></div>
+            <div class="layer-card"><div class="mono-muted">Metering</div><h3>计量层</h3><p class="stat-text">Token 消耗、积分余额、账单导出，每笔调用追踪到客户、模型、供应商和渠道。</p></div>
+            <div class="layer-card"><div class="mono-muted">Operation</div><h3>运营层</h3><p class="stat-text">分账、结算、合规归集、行业应用，形成可持续经营和服务贸易统计。</p></div>
+          </div>
+          <div class="terminal-panel reveal">
+            <div class="line"><span>customer_id</span><span>overseas_factory_001</span></div>
+            <div class="line"><span>scene</span><span>training_assistant · multilingual_support</span></div>
+            <div class="line"><span>usage</span><span>token: 2,480,000 · billable: yes</span></div>
+            <div class="line"><span>settlement</span><span>运营中心 / 潮创会 / 供应商 / 渠道</span></div>
+          </div>
+        </div>
+        <footer class="source"><span>平台能力应同时服务政府统计、企业采购和商业分账</span><span>05 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="产品界面" data-section="Product">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">05 / 产品界面</div>
+            <h2>对外像 AI 服务采购入口，对内是模型、计量和结算控制台。</h2>
+          </div>
+          <div class="slide-no">06</div>
+        </header>
+        <div class="slide-body split">
+          <div class="reveal">
+            <p class="body-copy">
+              参考成熟模型市场的结构，但改成政府和企业能理解的采购视角：先按厂家、场景、价格和能力探索模型，再进入 Playground 测试，最后进入企业账户、账单、分账和供应商体系。
+            </p>
+            <div class="problem-stack" style="margin-top: 22px">
+              <div class="feature-row"><div class="feature-icon">E</div><div><strong>模型 Explore</strong><span>模型厂家、场景、能力、价格和合规边界。</span></div><span class="mono-muted">select</span></div>
+              <div class="feature-row"><div class="feature-icon">P</div><div><strong>Playground</strong><span>参数测试、API Docs、History 和消耗记录。</span></div><span class="mono-muted">test</span></div>
+              <div class="feature-row"><div class="feature-icon">B</div><div><strong>账单与分账</strong><span>客户、供应商、渠道、平台收益全部可追溯。</span></div><span class="mono-muted">settle</span></div>
+            </div>
+          </div>
+          <div class="mock-console reveal" aria-label="平台界面示意">
+            <div class="console-head"><span>潮创出海 · 模型广场</span><span>● live</span></div>
+            <div class="console-body">
+              <div class="filter-rail">
+                <span class="tag">文本问答</span>
+                <span class="tag">图片生成</span>
+                <span class="tag">视频生成</span>
+                <span class="tag">智能制造</span>
+                <span class="tag">低空广告</span>
+                <span class="tag">运营商专区</span>
+              </div>
+              <div class="model-grid">
+                <div class="model-card"><div class="preview-strip"></div><div class="model-id">carrier/text-pro</div><div class="model-meta"><span>文本</span><span>￥0.012 / 1k</span></div></div>
+                <div class="model-card"><div class="preview-strip"></div><div class="model-id">media/video-fast</div><div class="model-meta"><span>视频</span><span>p50 38s</span></div></div>
+                <div class="model-card"><div class="preview-strip"></div><div class="model-id">factory/knowledge-rag</div><div class="model-meta"><span>工厂助手</span><span>private</span></div></div>
+                <div class="model-card"><div class="preview-strip"></div><div class="model-id">ad/creative-batch</div><div class="model-meta"><span>低空广告</span><span>batch</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="source"><span>界面为概念示意，可用于第一轮汇报演示</span><span>06 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="Token 计量与分账" data-section="Metering">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">06 / 计量与分账</div>
+            <h2>每一笔调用，都要能变成账单、分账和服务贸易数据。</h2>
+          </div>
+          <div class="slide-no">07</div>
+        </header>
+        <div class="slide-body split">
+          <div class="ledger-table reveal">
+            <div class="ledger-row header"><div>客户</div><div>场景</div><div>模型</div><div>Token</div><div>分账</div></div>
+            <div class="ledger-row"><div>侨商企业 A</div><div>多语种营销</div><div>media/video</div><div>860k</div><div>4 方</div></div>
+            <div class="ledger-row"><div>海外工厂 B</div><div>培训助手</div><div>factory/rag</div><div>2.48m</div><div>3 方</div></div>
+            <div class="ledger-row"><div>内容承制 C</div><div>AIGC 短剧</div><div>media/batch</div><div>8.2m</div><div>5 方</div></div>
+            <div class="ledger-row"><div>园区项目 D</div><div>低空广告</div><div>ad/creative</div><div>1.16m</div><div>4 方</div></div>
+          </div>
+          <div class="reveal">
+            <div class="chart" aria-label="Token 消耗趋势示意">
+              <svg viewBox="0 0 560 220" role="img">
+                <polyline points="20,180 100,156 180,160 260,118 340,88 420,74 540,40" fill="none" stroke="#00E5FF" stroke-width="3" />
+                <polyline points="20,196 100,178 180,152 260,136 340,102 420,90 540,66" fill="none" stroke="#FF1FA8" stroke-width="3" />
+                <circle cx="540" cy="40" r="5" fill="#00E5FF" />
+                <circle cx="540" cy="66" r="5" fill="#FF1FA8" />
+              </svg>
+            </div>
+            <div class="grid-3" style="margin-top: 14px">
+              <div class="stat-card"><div class="stat-num">客户</div><div class="stat-label">归属明确</div></div>
+              <div class="stat-card"><div class="stat-num">模型</div><div class="stat-label">成本明确</div></div>
+              <div class="stat-card"><div class="stat-num">渠道</div><div class="stat-label">分账明确</div></div>
+            </div>
+          </div>
+        </div>
+        <footer class="source"><span>计量层是项目从资源窗口走向经营抓手的关键</span><span>07 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="三大运营商入口" data-section="Carrier">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">07 / 运营商协同</div>
+            <h2>三大运营商入口先预留，接入方式按商务和监管确定。</h2>
+          </div>
+          <div class="slide-no">08</div>
+        </header>
+        <div class="slide-body">
+          <div class="grid-4 reveal">
+            <div class="hairline-card featured"><h3>入口跳转</h3><p class="stat-text">第一阶段可作为模型广场专区入口，保留统一客户路径。</p></div>
+            <div class="hairline-card"><h3>联合账号</h3><p class="stat-text">客户侧统一身份，运营商侧保留独立模型与权限边界。</p></div>
+            <div class="hairline-card"><h3>SDK / API 代理</h3><p class="stat-text">在合规条件下承接统一调用、用量统计和计费记录。</p></div>
+            <div class="hairline-card"><h3>独立报表</h3><p class="stat-text">运营商模型消耗、客户、收入和结算口径单独呈现。</p></div>
+          </div>
+          <div class="terminal-panel reveal">
+            <div class="line"><span>carrier_zone</span><span>China Mobile · China Unicom · China Telecom</span></div>
+            <div class="line"><span>integration_mode</span><span>link / account / SDK / API proxy</span></div>
+            <div class="line"><span>reporting</span><span>usage · revenue · settlement · compliance log</span></div>
+          </div>
+        </div>
+        <footer class="source"><span>重点是接口清晰，而不是第一天承诺完整打通</span><span>08 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="首批场景" data-section="Scenarios">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">08 / 示范场景</div>
+            <h2>第一批场景要能快速消耗、快速交付、快速形成样板。</h2>
+          </div>
+          <div class="slide-no">09</div>
+        </header>
+        <div class="slide-body">
+          <div class="scenario-grid reveal">
+            <div class="scenario"><div class="scenario-icon"></div><strong>海外侨商企业</strong><p>多语种营销、客服、资料生成、出海经营助手。</p><span class="mono-muted">demand pool</span></div>
+            <div class="scenario"><div class="scenario-icon"></div><strong>中资海外工厂</strong><p>培训、设备知识问答、生产资料、海外运营支持。</p><span class="mono-muted">industry</span></div>
+            <div class="scenario"><div class="scenario-icon"></div><strong>海外车辆设备</strong><p>运营报表、故障解释、客服问答和多语种支持。</p><span class="mono-muted">operations</span></div>
+            <div class="scenario"><div class="scenario-icon"></div><strong>AIGC 内容承制</strong><p>微短剧、品牌视频、海外广告和社媒内容。</p><span class="mono-muted">media</span></div>
+            <div class="scenario"><div class="scenario-icon"></div><strong>低空广告平台</strong><p>广告创意、素材批量生成、屏幕/航线内容适配。</p><span class="mono-muted">new economy</span></div>
+          </div>
+        </div>
+        <footer class="source"><span>建议启动 2-3 个标杆示范项目</span><span>09 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="商业模式" data-section="Business">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">09 / 商业化路径</div>
+            <h2>低毛利在 Token，利润在功能化和场景化。</h2>
+          </div>
+          <div class="slide-no">10</div>
+        </header>
+        <div class="slide-body">
+          <div class="business-stack reveal">
+            <div class="business-row">
+              <div><h3>基础收入</h3><p class="stat-text">模型调用与 Token 差价</p></div>
+              <div class="value"><h3>统一采购 / 接入 / 计费</h3><p class="stat-text" style="color:#d4d4d8">把分散模型采购变成企业可用的一站式账单。</p></div>
+              <div><span class="mono-muted">margin: low-mid</span></div>
+            </div>
+            <div class="business-row">
+              <div><h3>平台收入</h3><p class="stat-text">账户、权限、账单、计量</p></div>
+              <div class="value"><h3>企业 AI 能力采购入口</h3><p class="stat-text" style="color:#d4d4d8">客户为稳定使用、可追溯、可结算付费。</p></div>
+              <div><span class="mono-muted">margin: mid</span></div>
+            </div>
+            <div class="business-row">
+              <div><h3>高毛利收入</h3><p class="stat-text">行业智能体与工作流</p></div>
+              <div class="value"><h3>从卖 Token 到卖结果</h3><p class="stat-text" style="color:#d4d4d8">海外营销助手、短剧工作流、工厂知识助手、低空广告生成工具。</p></div>
+              <div><span class="mono-muted">margin: high</span></div>
+            </div>
+          </div>
+        </div>
+        <footer class="source"><span>智能体工厂是第二阶段毛利提升关键</span><span>10 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="政府支持诉求" data-section="Ask">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">10 / 支持诉求</div>
+            <h2>本轮要争取的不是一次性资金，而是试点与运营抓手。</h2>
+          </div>
+          <div class="slide-no">11</div>
+        </header>
+        <div class="slide-body">
+          <div class="ask-grid reveal">
+            <div class="ask-card"><h3>试点定位</h3><ul><li>纳入 AI 服务贸易 / 数字服贸试点</li><li>便于对上汇报和资源统筹</li></ul></div>
+            <div class="ask-card"><h3>场景组织</h3><ul><li>协调侨商与园区企业参与试点</li><li>形成首批示范项目</li></ul></div>
+            <div class="ask-card"><h3>合规协同</h3><ul><li>协调网信、工信、商务、运营商</li><li>先明确边界再放量</li></ul></div>
+            <div class="ask-card"><h3>运营主体</h3><ul><li>支持设立运营中心或联合主体</li><li>形成属地化统计归集</li></ul></div>
+            <div class="ask-card"><h3>政策申报</h3><ul><li>数字服务贸易、跨境电商、内容出海</li><li>争取示范和补贴标签</li></ul></div>
+            <div class="ask-card"><h3>运营商接口</h3><ul><li>协助对接三大运营商模型入口</li><li>提升权威性和合规可解释性</li></ul></div>
+          </div>
+        </div>
+        <footer class="source"><span>六项支持对应平台能否落地运营</span><span>11 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="实施计划" data-section="Roadmap">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">11 / 实施计划</div>
+            <h2>从汇报材料，到平台原型，再到运营中心。</h2>
+          </div>
+          <div class="slide-no">12</div>
+        </header>
+        <div class="slide-body">
+          <div class="timeline reveal">
+            <div class="timeline-step">
+              <span class="mono-muted">0-2 周</span>
+              <h3>筹备与竞标汇报</h3>
+              <ul><li>完成 BP、功能方案和汇报材料</li><li>明确支持口径、运营主体和主管部门路径</li><li>确定首批示范场景和客户名单</li></ul>
+            </div>
+            <div class="timeline-step">
+              <span class="mono-muted">1-2 个月</span>
+              <h3>平台原型与首批试点</h3>
+              <ul><li>上线 Explore、Playground、计量和账单</li><li>接入首批模型供应商与运营商入口</li><li>启动 2-3 个标杆示范项目</li></ul>
+            </div>
+            <div class="timeline-step">
+              <span class="mono-muted">3-6 个月</span>
+              <h3>运营中心与行业扩展</h3>
+              <ul><li>完善供应商、渠道分账和合规归集</li><li>发布行业智能体模板</li><li>形成汕头 AI 服务贸易出海样板</li></ul>
+            </div>
+          </div>
+        </div>
+        <footer class="source"><span>节奏上先拿试点，再拿平台，再拿经营数据</span><span>12 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="竞标优势" data-section="Advantage">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">12 / 竞标优势</div>
+            <h2>潮创会的优势，是把资源连接变成平台运营。</h2>
+          </div>
+          <div class="slide-no">13</div>
+        </header>
+        <div class="slide-body grid-4">
+          <div class="hairline-card featured reveal"><h3>资源组织能力</h3><p class="stat-text">连接侨商、产业活动、AIGC 创客、海外市场和本地政企资源。</p></div>
+          <div class="hairline-card reveal"><h3>可快速原型化</h3><p class="stat-text">模型聚合、模型测试、用量计量、供应商管理和分账逻辑可快速形成演示。</p></div>
+          <div class="hairline-card reveal"><h3>从入口到运营</h3><p class="stat-text">项目不是一次性活动，而是能沉淀客户、供应商、账单和申报数据的运营中心。</p></div>
+          <div class="hairline-card reveal"><h3>三方共同受益</h3><p class="stat-text">政府有数据样板，企业有采购入口，运营商和模型厂商有合规分发渠道。</p></div>
+        </div>
+        <footer class="source"><span>竞标重点：潮创会牵头，不是单纯技术供应商投标</span><span>13 / 14</span></footer>
+      </section>
+
+      <section class="slide" data-title="风险边界与结论" data-section="Close">
+        <header class="slide-header">
+          <div>
+            <div class="kicker">13 / 风险边界与结论</div>
+            <h2>稳健表达，先跑通低敏场景，再扩大平台规模。</h2>
+          </div>
+          <div class="slide-no">14</div>
+        </header>
+        <div class="slide-body">
+          <div class="risk-grid reveal">
+            <div class="risk"><div class="status">!</div><div><h3>政策口径需核验</h3><p class="stat-text">词元出海、唯一通道、国际海缆等表述必须用权威材料确认。</p></div></div>
+            <div class="risk"><div class="status">!</div><div><h3>数据出境必须合规</h3><p class="stat-text">先服务低敏、可控、可审计场景，建立日志留存和异常处置。</p></div></div>
+            <div class="risk"><div class="status">!</div><div><h3>不只做 Token 转售</h3><p class="stat-text">同步建设行业智能体，避免陷入价格竞争。</p></div></div>
+            <div class="risk"><div class="status">!</div><div><h3>分账主体前置设计</h3><p class="stat-text">政府平台、潮创会、供应商、渠道和客户权责需清晰。</p></div></div>
+          </div>
+          <div class="closing-list reveal">
+            <div class="hairline-card"><h3>试点定位</h3><p class="stat-text">先拿身份。</p></div>
+            <div class="hairline-card"><h3>园区承载</h3><p class="stat-text">再拿主体。</p></div>
+            <div class="hairline-card"><h3>示范客户</h3><p class="stat-text">启动样板。</p></div>
+            <div class="hairline-card"><h3>合规机制</h3><p class="stat-text">明确边界。</p></div>
+            <div class="hairline-card"><h3>平台抓手</h3><p class="stat-text">持续运营。</p></div>
+          </div>
+        </div>
+        <footer class="source"><span>Source: 潮创会 — 潮创出海 AI 中转站在线汇报版 — 2026-06-16</span><span>Privileged & Confidential</span></footer>
+      </section>
+    </main>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const rail = document.getElementById("rail");
+      const progress = document.getElementById("progress");
+      const counter = document.getElementById("counter");
+      let active = 0;
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      slides.forEach((slide, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "nav-item";
+        button.innerHTML = `
+          <span class="nav-index">${pad(index + 1)}</span>
+          <span class="nav-title">
+            <small>${slide.dataset.section}</small>
+            <strong>${slide.dataset.title}</strong>
+          </span>
+        `;
+        button.addEventListener("click", () => show(index));
+        rail.appendChild(button);
+      });
+
+      const navItems = Array.from(document.querySelectorAll(".nav-item"));
+
+      function show(index) {
+        active = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle("active", i === active);
+        });
+        navItems.forEach((item, i) => {
+          item.classList.toggle("active", i === active);
+        });
+        counter.textContent = `${pad(active + 1)} / ${pad(slides.length)}`;
+        progress.style.width = `${((active + 1) / slides.length) * 100}%`;
+      }
+
+      document.getElementById("prev").addEventListener("click", () => show(active - 1));
+      document.getElementById("next").addEventListener("click", () => show(active + 1));
+
+      window.addEventListener("keydown", (event) => {
+        if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          show(active + 1);
+        }
+        if (["ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          show(active - 1);
+        }
+        if (event.key === "Home") show(0);
+        if (event.key === "End") show(slides.length - 1);
+      });
+
+      function drawTile(canvas, seed) {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(240, Math.floor(rect.width * dpr));
+        const height = Math.max(160, Math.floor(rect.height * dpr));
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        const palettes = [
+          ["#111113", "#FF1FA8", "#00E5FF"],
+          ["#111113", "#7C3AED", "#FFB347"],
+          ["#0A0A0A", "#00E5FF", "#9AFF1F"],
+          ["#111113", "#FFB347", "#7C3AED"],
+          ["#0A0A0A", "#9AFF1F", "#00E5FF"],
+          ["#111113", "#FF1FA8", "#FFB347"],
+        ];
+        const colors = palettes[seed % palettes.length];
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, colors[0]);
+        gradient.addColorStop(0.52, colors[1]);
+        gradient.addColorStop(1, colors[2]);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.globalAlpha = 0.34;
+        for (let i = 0; i < 18; i += 1) {
+          const x = ((i * 97 + seed * 31) % width);
+          const y = ((i * 53 + seed * 47) % height);
+          const r = 18 + ((i * 11 + seed * 7) % 70);
+          const radial = ctx.createRadialGradient(x, y, 0, x, y, r);
+          radial.addColorStop(0, "rgba(255,255,255,0.38)");
+          radial.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = radial;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalAlpha = 0.28;
+        ctx.strokeStyle = "rgba(255,255,255,0.65)";
+        ctx.lineWidth = 1 * dpr;
+        for (let y = 22 * dpr; y < height; y += 24 * dpr) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y + Math.sin(y / 18) * 8 * dpr);
+          ctx.stroke();
+        }
+
+        ctx.globalAlpha = 0.95;
+        ctx.strokeStyle = "rgba(255,255,255,0.72)";
+        ctx.strokeRect(14 * dpr, 14 * dpr, width - 28 * dpr, height - 28 * dpr);
+      }
+
+      function renderCanvases() {
+        document.querySelectorAll("canvas[data-art]").forEach((canvas) => {
+          drawTile(canvas, Number(canvas.dataset.art || 0));
+        });
+      }
+
+      window.addEventListener("resize", renderCanvases);
+      renderCanvases();
+      show(0);
+    </script>
+  </body>
+</html>
